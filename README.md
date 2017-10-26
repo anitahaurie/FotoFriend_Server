@@ -1,1 +1,1 @@
-# FotoFriend
+# FotoFriend_Server

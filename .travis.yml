@@ -1,0 +1,16 @@
+language: python
+python: 3.6
+branches:
+  only:
+  - master
+script: echo "Deploying"
+addons:
+  artifacts: true
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $ARTIFACTS_KEY
+  secret_access_key: $ARTIFACTS_SECRET
+  region: 'us-west-2'
+  app: "FotoFriend"
+  env: "FotoFriend-Server"
+  bucket_name: "foto-friend-api"
