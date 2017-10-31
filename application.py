@@ -1,7 +1,6 @@
 import flask
-import requests
-
 from flask_restful import Resource, Api
+import boto3
 
 application = flask.Flask(__name__)
 api = Api(application)
@@ -11,22 +10,27 @@ class Default(Resource):
         return "Hello, World!"
 
 class StoreImage(Resource):
-	def post(self):
-		image = flask.request.data
+    def post(self):
+        username = flask.request.files['username']
+        image = flask.request.files['file']
 
-		#Send "upload" variable to S3 bucket
+        # Get encrypted username from MongoDB
 
+        #Send "upload" variable to S3 bucket
+        s3 = boto3.resource('s3')
+        filename = '%s/%s' % (username.stream.read().decode(), image.filename)
 
-		'''
-		if response from S3 bucket is successful
-			response = "Your upload was successful!"
-			response.status = "200 OK" 
-		else
-			response = "Something went wrong. Please try again."
-			response.status = ???
-		'''
-		response = 'Your upload was successful!'
-		return response, 200
+        try:
+            s3.Bucket('foto-friend').put_object(ACL='public-read', Key=filename, Body=image.stream.read())
+        except:
+            return 500 # Is this best?
+
+        # Photo URL
+        # url = "https://s3-us-west-2.amazonaws.com/foto-friend/" + username + "/" + filename_with_ext
+        # Clarifai
+        # MongoDB
+
+        return 200
 
 api.add_resource(Default, '/')
 api.add_resource(StoreImage, '/storeImage')

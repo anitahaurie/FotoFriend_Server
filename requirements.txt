@@ -1,4 +1,4 @@
 flask
 flask-api
 flask-restful
-requests
+boto3
