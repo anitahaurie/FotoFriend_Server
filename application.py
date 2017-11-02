@@ -16,7 +16,7 @@ class StoreImage(Resource):
 
         # Get encrypted username from MongoDB
 
-        #Send "upload" variable to S3 bucket
+        # Send "upload" variable to S3 bucket
         s3 = boto3.resource('s3')
         filename = '%s/%s' % (username.stream.read().decode(), image.filename)
 
@@ -34,21 +34,20 @@ class StoreImage(Resource):
 
 class Login(Resource):
     def post(self):
-        data = flask.request.data
+        data = flask.request.data.decode('utf-8')
         username = json.loads(data)['username']
-        print(username)
 
-        #Connect to MongoDB database
+        # Connect to MongoDB database
         client = MongoClient("mongodb://admin:%s@fotofrienddb-shard-00-00-5xqww.mongodb.net:27017,fotofrienddb-shard-00-01-5xqww.mongodb.net:27017,fotofrienddb-shard-00-02-5xqww.mongodb.net:27017/test?ssl=true&replicaSet=FotoFriendDB-shard-0&authSource=admin" % os.environ['MONGO_PWD'])
 
-        #Check if user already has a collection in the database
+        # Check if user already has a collection in the database
         db = client.FotoFriendUserData
 
         if (not username in db.collection_names()):
-           #New user, create new collection for the user
+           # New user, create new collection for the user
             db.create_collection(username)
 
-            #Create the default keyword with all images
+            # Create the default keyword with all images
             db.get_collection(username).update(
             {'Concept': "Default"}, 
             {"$addToSet": {"Links": ""}},
