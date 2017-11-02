@@ -3,3 +3,4 @@ flask-api
 flask-restful
 boto3
 pymongo
+clarifai
