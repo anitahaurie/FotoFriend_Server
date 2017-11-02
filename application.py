@@ -1,13 +1,13 @@
 import flask
-from flask_restful import Resource, Api
+import os
 import boto3
+import json
+
+from flask_restful import Resource, Api
+from pymongo import MongoClient
 
 application = flask.Flask(__name__)
 api = Api(application)
-
-class Default(Resource):
-    def get(self):
-        return "Hello, World!"
 
 class StoreImage(Resource):
     def post(self):
@@ -32,8 +32,41 @@ class StoreImage(Resource):
 
         return 200
 
-api.add_resource(Default, '/')
+class Login(Resource):
+    def post(self):
+        data = flask.request.data
+        username = json.loads(data)['username']
+        print(username)
+
+        #Connect to MongoDB database
+        client = MongoClient("mongodb://admin:%s@fotofrienddb-shard-00-00-5xqww.mongodb.net:27017,fotofrienddb-shard-00-01-5xqww.mongodb.net:27017,fotofrienddb-shard-00-02-5xqww.mongodb.net:27017/test?ssl=true&replicaSet=FotoFriendDB-shard-0&authSource=admin" % os.environ['MONGO_PWD'])
+
+        #Check if user already has a collection in the database
+        db = client.FotoFriendUserData
+
+        if (not username in db.collection_names()):
+           #New user, create new collection for the user
+            db.create_collection(username)
+
+            #Create the default keyword with all images
+            db.get_collection(username).update(
+            {'Concept': "Default"}, 
+            {"$addToSet": {"Links": ""}},
+            upsert = True)
+
+        userCollection = db.get_collection(username)
+
+        document = userCollection.find_one({"Concept":{"$eq":"Default"}})
+
+        links = document['Links']
+
+        response = flask.make_response(json.dumps({'Links' : links}))
+        response.headers['Content-type'] = 'application/json'
+
+        return response
+
 api.add_resource(StoreImage, '/storeImage')
+api.add_resource(Login, '/login')
 
 #REMINDER: Remove local port 80
 if __name__ == '__main__':
