@@ -128,4 +128,4 @@ api.add_resource(Filter, '/filter')
 #REMINDER: Remove local port 80
 if __name__ == '__main__':
     application.debug = False
-    application.run(port = 80)
+    application.run()
