@@ -10,6 +10,9 @@ from clarifai.rest import ClarifaiApp
 application = flask.Flask(__name__)
 api = Api(application)
 
+def inc(x):
+    return x + 1
+
 class StoreImage(Resource):
     def post(self):
         username = flask.request.files['username']
@@ -125,4 +128,4 @@ api.add_resource(Filter, '/filter')
 #REMINDER: Remove local port 80
 if __name__ == '__main__':
     application.debug = False
-    application.run()
+    application.run(port = 80)

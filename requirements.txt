@@ -4,3 +4,4 @@ flask-restful
 boto3
 pymongo
 clarifai
+pytest
