@@ -13,6 +13,13 @@ api = Api(application)
 def inc(x):
     return x + 1
 
+def create_app():
+    return application
+
+class Ping(Resource):
+    def get(self):
+        return flask.jsonify(ping='pong')
+
 class StoreImage(Resource):
     def post(self):
         username = flask.request.files['username']
@@ -161,6 +168,7 @@ api.add_resource(StoreImage, '/storeImage')
 api.add_resource(Login, '/login')
 api.add_resource(Filter, '/filter')
 api.add_resource(DeleteImage, '/deleteImage')
+api.add_resource(Ping, '/ping')
 
 #REMINDER: Remove local port 80
 if __name__ == '__main__':
