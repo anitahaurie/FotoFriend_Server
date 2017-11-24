@@ -118,9 +118,46 @@ class Filter(Resource):
         response.headers['Content-type'] = 'application/json'
         return response
 
+class DeleteImage(Resource):
+    def post(self):
+        data = flask.request.data.decode('utf-8')
+        username = json.loads(data)['username']
+        url = json.loads(data)['url']
+
+        # Get encrypted username from MongoDB
+        # Connect to MongoDB database
+        client = MongoClient("mongodb://admin:%s@fotofrienddb-shard-00-00-5xqww.mongodb.net:27017,fotofrienddb-shard-00-01-5xqww.mongodb.net:27017,fotofrienddb-shard-00-02-5xqww.mongodb.net:27017/test?ssl=true&replicaSet=FotoFriendDB-shard-0&authSource=admin" % os.environ['MONGO_PWD'])
+
+        # Get user collection
+        db = client.FotoFriendUserData
+        userCollection = db.get_collection(username)
+        document = userCollection.find_one({"Concept":{"$eq":"Default"}})
+        encryptUsername = document['_id']
+
+        # Remove variable from S3 bucket
+        s3 = boto3.resource('s3')
+        url_split = url.split('/')
+        filename = '%s/%s' % (url_split[4], url_split[5])
+
+        try:
+            s3.Bucket('foto-friend').delete_objects(Delete={ 'Objects': [ {'Key': filename} ] })
+        except:
+            return 500 # Is this best?
+
+        # Update MongoDB to not include URL
+        userCollection.update(
+            {},
+            { '$pull': { 'Links': url }},
+            upsert = False,
+            multi = True
+        )
+
+        return 200
+
 api.add_resource(StoreImage, '/storeImage')
 api.add_resource(Login, '/login')
 api.add_resource(Filter, '/filter')
+api.add_resource(DeleteImage, '/deleteImage')
 
 #REMINDER: Remove local port 80
 if __name__ == '__main__':
