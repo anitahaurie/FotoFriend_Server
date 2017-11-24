@@ -55,7 +55,7 @@ Requires authentication? 	Yes
 ## **Example Request**
 POST http://fotofriend.us-west-2.elasticbeanstalk.com/login
 
-##**Example Response**
+## **Example Response**
 ```
 {
     "Links": 
@@ -76,15 +76,15 @@ POST http://fotofriend.us-west-2.elasticbeanstalk.com/login
 # **POST Filter**
 Receives a list of keywords and returns the image links associated to all keywords.
 
-##**Resource URL**
+##  **Resource URL**
 http://fotofriend.us-west-2.elasticbeanstalk.com/filter
 
-##**Resource Information**
+## **Resource Information**
 Response formats: JSON Response
 
 Requires authentication? Yes
 
-##**Parameters**
+## **Parameters**
 *Name*: username
 
 *Description*: User’s Google account name used in authentication
@@ -100,10 +100,10 @@ Requires authentication? Yes
 *Example*: [cat, flower]
 
 
-##**Example Request**
+## **Example Request**
 POST http://fotofriend.us-west-2.elasticbeanstalk.com/filter
 
-##**Example Response**
+## **Example Response**
 ```
 {
     "Links": 
@@ -150,8 +150,9 @@ Requires authentication? Yes
 
 *Example*: 							"https://s3-us-west-2.amazonaws.com/foto-friend/59fac5a32bc4643271af86ea/madcat.jpg"
 
-##**Example Request**
+## **Example Request**
 POST http://fotofriend.us-west-2.elasticbeanstalk.com/deleteImage
-**Example Response**
+
+## **Example Response**
 200
 
