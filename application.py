@@ -10,9 +10,6 @@ from clarifai.rest import ClarifaiApp
 application = flask.Flask(__name__)
 api = Api(application)
 
-def inc(x):
-    return x + 1
-
 def create_app():
     return application
 
