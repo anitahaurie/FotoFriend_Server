@@ -4,7 +4,7 @@ import json
 import os
 from pymongo import MongoClient
 
-class TestApp:
+class TestLogin:
     def test_login(self, client):
         res = client.post(url_for('login'), data=json.dumps({'username': 'fotofriendtest'}))
         assert res.status_code == 200
