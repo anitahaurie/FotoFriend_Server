@@ -2,6 +2,7 @@ import flask
 import os
 import boto3
 import json
+import base64
 
 from flask_restful import Resource, Api
 from pymongo import MongoClient
@@ -10,10 +11,20 @@ from clarifai.rest import ClarifaiApp
 application = flask.Flask(__name__)
 api = Api(application)
 
+def create_app():
+    return application
+
+class Ping(Resource):
+    def get(self):
+        return flask.jsonify(ping='pong')
+
 class StoreImage(Resource):
     def post(self):
-        username = flask.request.files['username']
-        image = flask.request.files['file']
+        data = flask.request.form.to_dict()
+
+        username = data['username']
+        filename = data['filename']
+        image = base64.b64decode(data['file'])
 
         # Get encrypted username from MongoDB
         # Connect to MongoDB database
@@ -21,16 +32,16 @@ class StoreImage(Resource):
 
         # Get user collection
         db = client.FotoFriendUserData
-        userCollection = db.get_collection(username.stream.read().decode())
+        userCollection = db.get_collection(username)
         document = userCollection.find_one({"Concept":{"$eq":"Default"}})
         encryptUsername = document['_id']
 
         # Send "upload" variable to S3 bucket
         s3 = boto3.resource('s3')
-        filename = '%s/%s' % (encryptUsername, image.filename)
+        filename = '%s/%s' % (encryptUsername, filename)
 
         try:
-            s3.Bucket('foto-friend').put_object(ACL='public-read', Key=filename, Body=image.stream.read())
+            s3.Bucket('foto-friend').put_object(ACL='public-read', Key=filename, Body=image)
         except:
             return 500 # Is this best?
 
@@ -158,6 +169,7 @@ api.add_resource(StoreImage, '/storeImage')
 api.add_resource(Login, '/login')
 api.add_resource(Filter, '/filter')
 api.add_resource(DeleteImage, '/deleteImage')
+api.add_resource(Ping, '/ping')
 
 #REMINDER: Remove local port 80
 if __name__ == '__main__':

@@ -1,9 +1,11 @@
 language: python
-python: 3.6
+python: 3.4
 branches:
   only:
   - master
-script: echo "Deploying"
+script: 
+  - echo "Deploying"
+  - pytest
 addons:
   artifacts: true
 deploy:
