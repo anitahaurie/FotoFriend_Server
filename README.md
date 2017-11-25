@@ -22,9 +22,17 @@ Requires authentication? Yes
 
 *Name*: image
 
-*Description*: Image file to upload to the site
+*Description*: Image file to upload to the site in bytes
 
-*Example*: .jpeg file
+*Example*: .jpeg file in bytes
+
+--
+
+*Name*: filename
+
+*Description*: Image filename to upload
+
+*Example*: tmp.jpg
 
 ## **Example Request**
 POST http://fotofriend.us-west-2.elasticbeanstalk.com/storeImage
