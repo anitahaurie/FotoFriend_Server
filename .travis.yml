@@ -3,10 +3,16 @@ python: 3.4
 branches:
   only:
   - master
-  - pytest
 script: 
-  - echo "Testing"
+  - echo "Deploying"
   - pytest
-  - echo "Not Deploying"
 addons:
   artifacts: true
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $ARTIFACTS_KEY
+  secret_access_key: $ARTIFACTS_SECRET
+  region: 'us-west-2'
+  app: "FotoFriend"
+  env: "FotoFriend-Server"
+  bucket_name: "foto-friend-api"
